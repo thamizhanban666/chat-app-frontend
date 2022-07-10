@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Box,
   Tab,
@@ -9,14 +9,24 @@ import {
 } from "@chakra-ui/react";
 import Login from '../components/authentication/Login';
 import Signup from '../components/authentication/Signup';
+import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
+  
+  const [user, setUser] = useState();
+  const navigate = useNavigate()
+  
+// useEffect(() => {
+//   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+//   setUser(userInfo);
+//   // console.log(userInfo);
+//   if(userInfo) navigate("/chats")
+// }, [])
+  
   return (
     <Box w="lg" display={"flex"} flexDir={"column"} alignItems={"center"} mx="auto" >
       <Box
         fontSize="3xl"
-        // variant='subtle'
-        // colorScheme='green'
         p={"1px 12px"}
         bg="#008E9B"
         fontWeight={"bold"}

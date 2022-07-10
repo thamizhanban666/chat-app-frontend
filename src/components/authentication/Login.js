@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
@@ -7,14 +7,16 @@ import { useState } from "react";
 import axios from "axios";
 import { useToast } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
+import ChatContext from '../../Context/ChatProvider';
 
 function Login() {
+  const {user,setUser} = useContext(ChatContext)
 
   const [show, setShow] = useState(false);
   // const handleClick = () => setShow(!show);
   const toast = useToast();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -25,7 +27,7 @@ function Login() {
       toast({
         title: "Please Fill all the Feilds",
         status: "warning",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
         position: "top",
       });
@@ -50,19 +52,19 @@ function Login() {
       toast({
         title: "Login Successful",
         status: "success",
-        duration: 5000,
+        duration: 2000,
         isClosable: true,
         position: "top",
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
+      setUser(JSON.parse(localStorage.getItem("userInfo")))
       setLoading(false);
       navigate("/chats");
     } catch (error) {
       toast({
         title: "Server Error!",
-        description: error.response.data.message,
         status: "error",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
         position: "top",
       });

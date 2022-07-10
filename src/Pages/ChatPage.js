@@ -1,26 +1,23 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useContext, useState } from 'react'
+import SideDrawer from '../components/miscellaneous/SideDrawer';
+import MyChats from '../components/MyChats'
+import ChatBox from '../components/ChatBox'
+import ChatContext from '../Context/ChatProvider';
+import {Box} from "@chakra-ui/react"
 
 function ChatPage() {
+  const { user, selectedChat } = useContext(ChatContext);
+  const [fetchAgain, setFetchAgain] = useState(false);
 
-  const [chats, setChats] = useState([]);
-
-  useEffect(() => {
-    fetchChats();
-  },[])
-
-  const fetchChats = async () => {
-    const data = await axios.get("http://localhost:5000/api/chats");
-    setChats(data.data);  
-  } 
-  
   return (
-    <div>
-      {chats.map((chat) => (
-        <div key={chat._id}>{chat.chatName }</div>
-      ))}
+    <div style={{width:"100%"}}>
+      {user && <SideDrawer />}
+      <Box display={"flex"} justifyContent={'space-between'} w={"100%"} h={{ base: selectedChat ? "100%" : "89.3%", md: "89.3%" }} p={{base: '4px', md:'8px'}} >
+        {user && <MyChats fetchAgain={fetchAgain} /> }
+        {user && <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />}
+      </Box>
     </div>
   )
 }
 
-export default ChatPage
+export default ChatPage;

@@ -4,10 +4,13 @@ import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { VStack } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ChatContext from "../../Context/ChatProvider";
 
 function Signup() {
+
+  const {user,setUser} = useContext(ChatContext)
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const toast = useToast();
@@ -71,7 +74,7 @@ function Signup() {
       toast({
         title: "Please Fill all the Feilds",
         status: "warning",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
         position: "top",
       });
@@ -82,14 +85,13 @@ function Signup() {
       toast({
         title: "Passwords Do Not Match",
         status: "warning",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
         position: "top",
       });
       setPicLoading(false);
       return;
     }
-    // console.log(name, email, password, pic);
     try {
       const config = {
         headers: {
@@ -110,11 +112,12 @@ function Signup() {
       toast({
         title: "Registration Successful",
         status: "success",
-        duration: 5000,
+        duration: 2000,
         isClosable: true,
         position: "top",
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
+      setUser(JSON.parse(localStorage.getItem("userInfo")));
       setPicLoading(false);
       navigate("/chats");
     } catch (error) {

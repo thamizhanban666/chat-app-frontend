@@ -3,7 +3,7 @@
 .App {
   min-height: 100vh;
   display: flex;
-  background-image: url("./download2.png");
+  background-image: url("./assets/download2.png");
   background-position: center;
   background-size: cover;
   color:#222
