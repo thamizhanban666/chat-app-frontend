@@ -118,26 +118,33 @@ function MyChats({fetchAgain}) {
                     src={!chat.isGroupChat
                       ? getSenderFull(user, chat.users).pic
                       : chat.chatName}
-                    border={selectedChat === chat ? "1px solid #38B2AC" : "2px solid #fff" }                  />
-                  <Text>
-                    {!chat.isGroupChat
+                    border={selectedChat === chat ? "1px solid #38B2AC" : "2px solid #fff"}
+                  />
+                  <div>
+                    <Text>
+                      {!chat.isGroupChat
                       ? getSender(user, chat.users)
                       : chat.chatName}
-                  </Text>
-                </Box>
-                {chat.latestMessage && (
-                  <Text fontSize="xs">
-                    <b>{chat.latestMessage.sender.name} : </b>
-                    {chat.latestMessage.content.length > 50
-                      ? chat.latestMessage.content.substring(0, 51) + "..."
+                    </Text>
+                {chat.latestMessage ? (
+                  <Text fontSize="xs"  >
+                    {/* <b>{chat.latestMessage.sender.name} : </b> */}
+                    {chat.latestMessage.content.length > 25
+                      ? chat.latestMessage.content.substring(0, 26) + "..."
                       : chat.latestMessage.content}
                   </Text>
+                ) : (
+                  <Text fontSize="xs">
+                    No chat to display
+                  </Text>
                 )}
+                  </div>
+                </Box>
               </Box>
             ))}
           </Stack>
         ) : (
-          <ChatLoading fetchChats={fetchChats} />
+          <ChatLoading />
         )}
       </Box>
     </Box>

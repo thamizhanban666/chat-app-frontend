@@ -1,8 +1,7 @@
 import { Stack } from "@chakra-ui/layout";
 import { Skeleton } from "@chakra-ui/skeleton";
 
-const ChatLoading = ({fetchChats}) => {
-  fetchChats()
+const ChatLoading = () => {
   return (
     <Stack>
       <Skeleton height="50px" />

@@ -62,7 +62,7 @@ function Login() {
       navigate("/chats");
     } catch (error) {
       toast({
-        title: "Server Error!",
+        title: "email or password is wrong",
         status: "error",
         duration: 3000,
         isClosable: true,

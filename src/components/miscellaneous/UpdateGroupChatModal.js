@@ -205,7 +205,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
-        <ModalContent m="1">
+        <ModalContent m="1" borderRadius={"xl"}>
           <ModalHeader
             fontSize="35px"
             fontFamily="Work sans"
@@ -213,6 +213,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
             justifyContent="center"
             bg="#38B2AC"
             color="#fff"
+            borderRadius={"xl"}
           >
             {selectedChat.chatName}
           </ModalHeader>
@@ -266,7 +267,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
               ))
             )}
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter borderRadius={"xl"}>
             <Button colorScheme='blue' mr={3} onClick={onClose}>
               Close
             </Button>
