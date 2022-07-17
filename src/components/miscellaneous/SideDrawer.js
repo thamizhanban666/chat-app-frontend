@@ -149,10 +149,7 @@ function SideDrawer() {
             <MenuList pl={2}>
               {!notification.length && "No New Messages"}
               {
-                notification.filter((n, i) => {
-                return notification.indexOf(n) === i
-                })
-                .map((notif) => {
+                notification.map((notif) => {
                   return (
                     <MenuItem
                       key={notif._id}
