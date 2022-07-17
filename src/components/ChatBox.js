@@ -12,7 +12,7 @@ function ChatBox({fetchAgain,setFetchAgain}) {
       alignItems="center"
       flexDir="column"
       // p={1}
-      p={"12px 3px 3px 3px"}
+      p={"12px 0px 0px 0px"}
       bg="#eeefff"
       w={{ base: "100%", md: "68%" }}
       borderRadius="lg"

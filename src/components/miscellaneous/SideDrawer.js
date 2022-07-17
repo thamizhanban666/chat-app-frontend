@@ -5,16 +5,12 @@ import { Avatar, Box, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerConte
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-// import ChatLoading from "../ChatLoading";
-// import { Spinner } from "@chakra-ui/spinner";
-// import ProfileModal from "./ProfileModal";
 import NotificationBadge from "react-notification-badge";
 import { Effect } from "react-notification-badge";
 import ProfileModal from "./ProfileModal";
 import ChatLoading from "../ChatLoading";
 import UserListItem from "../UserAvatar/UserListItem";
-// import { getSender } from "../../config/ChatLogics";
-// import UserListItem from "../userAvatar/UserListItem";
+import { getSender } from "../../config/chatLogic";
 
 function SideDrawer() {
   const [search, setSearch] = useState("");
@@ -62,7 +58,7 @@ function SideDrawer() {
         },
       };
 
-      const { data } = await axios.get(`http://localhost:5000/api/user?search=${search}`, config);
+      const { data } = await axios.get(`https://mern-chat-app-thamizhanban.herokuapp.com/api/user?search=${search}`, config);
 
       setLoading(false);
       setSearchResult(data);
@@ -89,7 +85,7 @@ function SideDrawer() {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.post(`http://localhost:5000/api/chat`, { userId }, config);
+      const { data } = await axios.post(`https://mern-chat-app-thamizhanban.herokuapp.com/api/chat`, { userId }, config);
 
       if (!chats.find((c) => c._id === data._id)) {
         setChats([...chats,data]);
@@ -100,7 +96,6 @@ function SideDrawer() {
     } catch (error) {
       toast({
         title: "Error fetching the chat",
-        // description: error.message,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -112,16 +107,13 @@ function SideDrawer() {
   return (
     <>
       <Box
-        // display="flex"
         display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
         justifyContent="space-between"
         alignItems="center"
-        bg="white"
+        // bg="#b13abe"
         w="100%"
         p="4px 4px"
-        borderWidth="4px"
-        // borderInlineStartRadius="lg"
-        // borderInlineEndRadius="lg"
+        borderBottomWidth="2px"
       >
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
           <Button variant="ghost"
@@ -139,7 +131,6 @@ function SideDrawer() {
           fontWeight={"bold"}
           color="#fff"
           w="fit-content"
-          // m="15px 0 15px 0"
           border={"2px solid lightgrey"}
           borderRadius="full"
           textDecorationStyle={"normal"}
@@ -153,27 +144,35 @@ function SideDrawer() {
                 count={notification.length}
                 effect={Effect.SCALE}
               />
-              <BellIcon fontSize="2xl" m={1} />
+              <BellIcon fontSize="2xl" m={1} color="white" />
             </MenuButton>
-            {/* <MenuList pl={2}>
+            <MenuList pl={2}>
               {!notification.length && "No New Messages"}
-              {notification.map((notif) => (
-                <MenuItem
-                  key={notif._id}
-                  onClick={() => {
-                    setSelectedChat(notif.chat);
-                    setNotification(notification.filter((n) => n !== notif));
-                  }}
-                >
-                  {notif.chat.isGroupChat
-                    ? `New Message in ${notif.chat.chatName}`
-                    : `New Message from ${getSender(user, notif.chat.users)}`}
-                </MenuItem>
-              ))}
-            </MenuList> */}
+              {
+                notification.filter((n, i) => {
+                return notification.indexOf(n) === i
+                })
+                .map((notif) => {
+                  return (
+                    <MenuItem
+                      key={notif._id}
+                      onClick={() => {
+                        setSelectedChat(notif.chat);
+                        setNotification(notification.filter((n) => n !== notif));
+                      }}
+                    >
+                      {
+                        notif.chat.isGroupChat
+                          ? `New Message in ${notif.chat.chatName}`
+                          : `New Message from ${getSender(user, notif.chat.users)}`
+                      }
+                    </MenuItem>)
+                })
+                }
+            </MenuList>
           </Menu>
           <Menu>
-            <MenuButton as={Button} bg="white" rightIcon={<ChevronDownIcon />}>
+            <MenuButton as={Button} bg="#eeefff" p="1" rightIcon={<ChevronDownIcon />}>
               <Avatar
                 size="sm"
                 cursor="pointer"

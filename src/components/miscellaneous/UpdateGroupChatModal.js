@@ -1,4 +1,4 @@
-import { EditIcon, ViewIcon } from "@chakra-ui/icons";
+import { EditIcon } from "@chakra-ui/icons";
 import {
   Modal,
   ModalOverlay,
@@ -15,6 +15,7 @@ import {
   Box,
   IconButton,
   Spinner,
+  Text,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useContext, useState } from "react";
@@ -47,8 +48,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.get(`http://localhost:5000/api/user?search=${search}`, config);
-      // console.log(data);
+      const { data } = await axios.get(`https://mern-chat-app-thamizhanban.herokuapp.com/api/user?search=${search}`, config);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
@@ -75,7 +75,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
         },
       };
       const { data } = await axios.put(
-        `http://localhost:5000/api/chat/renamegroup`,
+        `https://mern-chat-app-thamizhanban.herokuapp.com/api/chat/renamegroup`,
         {
           chatId: selectedChat._id,
           chatName: groupChatName,
@@ -104,7 +104,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
       toast({
         title: "User Already in group!",
         status: "error",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
         position: "top",
       });
@@ -115,7 +115,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
       toast({
         title: "Only admins can add!",
         status: "error",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
         position: "top",
       });
@@ -130,7 +130,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
         },
       };
       const { data } = await axios.put(
-        `http://localhost:5000/api/chat/addtogroup`,
+        `https://mern-chat-app-thamizhanban.herokuapp.com/api/chat/addtogroup`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
@@ -159,7 +159,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
       toast({
         title: "Only admin can remove!",
         status: "error",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
         position: "top",
       });
@@ -174,7 +174,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
         },
       };
       const { data } = await axios.put(
-        `http://localhost:5000/api/chat/removefromgroup`,
+        `https://mern-chat-app-thamizhanban.herokuapp.com/api/chat/removefromgroup`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
@@ -210,16 +210,19 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
             fontSize="35px"
             fontFamily="Work sans"
             display="flex"
+            flexDirection="column"
             justifyContent="center"
+            alignItems="center"
             bg="#38B2AC"
             color="#fff"
             borderRadius={"xl"}
           >
-            {selectedChat.chatName}
+            <div>{selectedChat.chatName}</div>
           </ModalHeader>
 
           <ModalCloseButton color="#fff" />
           <ModalBody display="flex" flexDir="column" alignItems="center">
+            <Text fontWeight="bold" >Group admin : { selectedChat.groupAdmin.name }</Text>
             <Box w="100%" display="flex" flexWrap="wrap" pb={3}>
               {selectedChat.users.map((u) => (
                 <UserBadgeItem

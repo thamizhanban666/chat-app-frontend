@@ -1,5 +1,6 @@
 import { Avatar, Tooltip } from "@chakra-ui/react";
 import { useContext } from "react";
+import Lottie from "react-lottie";
 import ScrollableFeed from "react-scrollable-feed";
 import {
   isLastMessage,
@@ -9,7 +10,7 @@ import {
 } from "../config/chatLogic";
 import ChatContext from "../Context/ChatProvider";
 
-const ScrollableChat = ({ messages }) => {
+const ScrollableChat = ({ messages, istyping, defaultOptions }) => {
   const { user } = useContext(ChatContext);
 
   return (
@@ -33,8 +34,11 @@ const ScrollableChat = ({ messages }) => {
             )}
             <span
               style={{
-                backgroundColor: `${
-                  m.sender._id === user._id ? "#B9F5D0" : "#BEE3F8" 
+                color: "#fff",
+                backgroundImage: `${
+                  m.sender._id === user._id ? "linear-gradient(to right top, #02a089, #03a38d, #03a792, #04aa96, #05ae9b, #04b39f, #02b7a2, #01bca6, #00c3aa, #00caae, #03d1b1, #08d8b5)"
+                  :
+                  "linear-gradient(to left top, #0a8bbc, #0089c0, #0088c3, #0086c7, #0084ca, #0088ce, #008dd2, #0091d6, #009cdb, #00a7df, #00b2e2, #00bde4)" 
                 }`,
                 marginLeft: isSameSenderMargin(messages, m, i, user._id),
                 marginTop: isSameUser(messages, m, i, user._id) ? 3 : 10,
@@ -53,6 +57,18 @@ const ScrollableChat = ({ messages }) => {
             </span>
           </div>
         ))}
+      {istyping ? (
+        <div>
+          <Lottie
+            options={defaultOptions}
+            height={24}
+            width={150}
+            style={{ marginBottom: 7, marginLeft: 0, marginTop:8 }}
+          />  
+        </div>
+      ) : (
+        <></>
+      )}
     </ScrollableFeed>
   );
 };

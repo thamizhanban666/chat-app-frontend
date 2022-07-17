@@ -1,7 +1,7 @@
 import { FormControl } from "@chakra-ui/form-control";
 import { Box, Text } from "@chakra-ui/layout";
 import "./style.css";
-import { Avatar, IconButton, Input, Spinner, useToast } from "@chakra-ui/react";
+import { Avatar, Button, IconButton, Input, Spinner, useToast } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { ArrowBackIcon } from "@chakra-ui/icons";
@@ -12,10 +12,10 @@ import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import ScrollableChat from "./ScrollableChats";
 import Lottie from "react-lottie";
 import animationData from "../animations/typing.json";
-
+import Send from "../assets/send.png"
 import io from "socket.io-client";
 
-const ENDPOINT = "http://localhost:5000"; // "https://talk-a-tive.herokuapp.com"; -> After deployment
+const ENDPOINT = "https://mern-chat-app-thamizhanban.herokuapp.com";
 
 var socket, selectedChatCompare;
 
@@ -52,10 +52,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       setLoading(true);
 
       const { data } = await axios.get(
-        `http://localhost:5000/api/message/${selectedChat._id}`,
+        `https://mern-chat-app-thamizhanban.herokuapp.com/api/message/${selectedChat._id}`,
         config
       );
-      // console.log(messages);
       setMessages(data);
       setLoading(false);
 
@@ -73,7 +72,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   };
 
   const sendMessage = async (event) => {
-    if (event.key === "Enter" && newMessage) {
+    if (event.key === "Enter" && newMessage || event == "send" && newMessage) {
       setTyping(false)
       socket.emit("stop typing", selectedChat._id);
       try {
@@ -85,17 +84,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         };
         setNewMessage("");
         const { data } = await axios.post(
-          "http://localhost:5000/api/message",
+          "https://mern-chat-app-thamizhanban.herokuapp.com/api/message",
           {
             content: newMessage,
-            // chatId: selectedChat,
             chatId: selectedChat._id,
           },
           config
           );
-          // console.log(data)
           setMessages([...messages, data]);
           socket.emit("new message", data);
+          setFetchAgain(!fetchAgain);
         } catch (error) {
           toast({
             title: "Error Occured!",
@@ -117,7 +115,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     if (!typing) {
       setTyping(true);
       socket.emit("typing", selectedChat._id);
-      // console.log("typing");
     }
 
     if (!e.target.value) {
@@ -140,6 +137,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     // }, timerLength);
   };
 
+  const isNotified = (notifications, newElement) => {
+    const isFound = notifications.some((e) => {
+      if (e.chat._id == newElement.chat._id) { return true; }
+      return false;
+    })
+    return isFound;
+  }
+
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
@@ -157,15 +162,18 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   useEffect(() => {
     socket.on("message recieved", (newMessageRecieved) => {
       if (
-        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        !selectedChatCompare || 
         selectedChatCompare._id !== newMessageRecieved.chat._id
-      ) {
-        // if (!notification.includes(newMessageRecieved)) {
-        //   setNotification([newMessageRecieved, ...notification]);
-        //   setFetchAgain(!fetchAgain);
-        // }
+        ) {
+        if (!notification.includes(newMessageRecieved)) {
+          if (!isNotified(notification, newMessageRecieved)) {
+            setNotification([newMessageRecieved, ...notification]);
+            setFetchAgain(!fetchAgain);
+          }
+        }
       } else {
         setMessages([...messages, newMessageRecieved]);
+        setFetchAgain(!fetchAgain);
       }
     });
   });
@@ -237,16 +245,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             display="flex"
             flexDir="column"
             justifyContent="flex-end"
-            p={2}
+            // p={2}
             mt="6px"
             bg="#fff"
             w="100%"
             h="100%"
             overflowY="hidden"
-            // borderRadius="md"
             borderBottomRadius="lg"
             borderTopRadius="md"
-            border="0.5px solid #38B2AC"
+            // border="0.5px solid #38B2AC"
           >
             {loading ? (
               <Spinner
@@ -257,36 +264,37 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 margin="auto"
               />
             ) : (
-              <div className="messages">
-                <ScrollableChat messages={messages} />
-              </div>
+              <Box className="messages" px={2} pb={1}>
+                <ScrollableChat messages={messages} istyping={istyping} defaultOptions={defaultOptions} />
+              </Box>
             )}
 
-            <FormControl
-              onKeyDown={sendMessage}
-              id="first-name"
-              isRequired
-              mt={3}
-            >
-              {istyping ? (
-                <div>
-                  <Lottie
-                    options={defaultOptions}
-                    height={24}
-                    width={150}
-                    style={{ marginBottom: 15, marginLeft: 0 }}
-                  />  
-                </div>
-              ) : (
-                <></>
-              )}
-              <Input
-                variant="filled"
-                bg="#E0E0E0"
-                placeholder="Enter a message.."
-                onChange={typingHandler}
-                value={newMessage}
-              />
+              <FormControl
+                onKeyDown={sendMessage}
+                id="first-name"
+                isRequired
+                // mt={1}
+              >
+              <Box display="flex" p={1}>
+                <Input
+                  variant="filled"
+                  bg="#E0E0E0"
+                  placeholder="Enter a message.."
+                  onChange={typingHandler}
+                  value={newMessage}
+                />
+                <Button
+                  // mt={1}
+                  ml={1}
+                  p="4px"
+                  borderRadius={"100%"}
+                  backgroundColor={"#b13abe"}
+                  _hover={{backgroundColor:"#b13abe"}}
+                  onClick={() => { sendMessage("send") }}
+                >
+                  <img src={Send}></img>
+                </Button>
+              </Box>
             </FormControl>
           </Box>
         </>

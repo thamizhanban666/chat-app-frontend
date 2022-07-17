@@ -10,7 +10,7 @@ import ChatContext from "../../Context/ChatProvider";
 
 function Signup() {
 
-  const {user,setUser} = useContext(ChatContext)
+  const {setUser} = useContext(ChatContext)
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const toast = useToast();
@@ -99,7 +99,7 @@ function Signup() {
         },
       };
       const { data } = await axios.post(
-        "http://localhost:5000/api/user/signup",
+        "https://mern-chat-app-thamizhanban.herokuapp.com/api/user/signup",
         {
           name,
           email,

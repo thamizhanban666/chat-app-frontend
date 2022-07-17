@@ -1,17 +1,15 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Avatar, Box, Button, Stack, Text, useToast } from '@chakra-ui/react';
 import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect} from 'react'
 import { getSender, getSenderFull } from '../config/chatLogic';
 import ChatContext from '../Context/ChatProvider';
 import ChatLoading from './ChatLoading';
 import GroupChatModal from './miscellaneous/GroupChatModal';
 
 function MyChats({fetchAgain}) {
-  // let loggedUser = JSON.parse(localStorage.getItem("userInfo"))
-  // const [loggedUser, setLoggedUser] = useState(JSON.parse(localStorage.getItem("userInfo")));
-
-  const { selectedChat, setSelectedChat, user, chats, setChats } = useContext(ChatContext);
+  
+  const { selectedChat, setSelectedChat, user, chats, setChats,notification, setNotification } = useContext(ChatContext);
 
   const toast = useToast();
 
@@ -23,8 +21,7 @@ function MyChats({fetchAgain}) {
         },
       };
 
-      const { data } = await axios.get("http://localhost:5000/api/chat", config);
-      // console.log(data);
+      const { data } = await axios.get("https://mern-chat-app-thamizhanban.herokuapp.com/api/chat", config);
       setChats(data);
     } catch (error) {
       toast({
@@ -39,7 +36,6 @@ function MyChats({fetchAgain}) {
   };
 
   useEffect(() => {
-    // setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
   }, [fetchAgain]);
 
@@ -96,14 +92,14 @@ function MyChats({fetchAgain}) {
           <Stack overflowY="scroll">
             {chats.map((chat) => (
               <Box
-                onClick={() => setSelectedChat(chat)}
+                onClick={() => { setSelectedChat(chat); setNotification(notification.filter((n) => n.chat._id !== chat._id)); }}
                 cursor="pointer"
                 bg={selectedChat === chat ? "#eeefff": "#38B2AC" }
                 color={selectedChat === chat ? "black" : "white"}
                 _hover={{border:"2px solid #38B2AC"}}
                 border={selectedChat === chat ? "1px solid #38B2AC" : "1px solid #fff" }
                 px={2}
-                py={1}
+                py={"2px"}
                 borderRadius="lg"
                 key={chat._id}
               >
@@ -121,20 +117,19 @@ function MyChats({fetchAgain}) {
                     border={selectedChat === chat ? "1px solid #38B2AC" : "2px solid #fff"}
                   />
                   <div>
-                    <Text>
+                    <Text fontWeight="bold">
                       {!chat.isGroupChat
                       ? getSender(user, chat.users)
                       : chat.chatName}
                     </Text>
                 {chat.latestMessage ? (
-                  <Text fontSize="xs"  >
-                    {/* <b>{chat.latestMessage.sender.name} : </b> */}
+                  <Text fontSize="sm"  >
                     {chat.latestMessage.content.length > 25
                       ? chat.latestMessage.content.substring(0, 26) + "..."
                       : chat.latestMessage.content}
                   </Text>
                 ) : (
-                  <Text fontSize="xs">
+                  <Text fontSize="sm" color="lightGray" >
                     No chat to display
                   </Text>
                 )}
