@@ -109,10 +109,10 @@ function MyChats({fetchAgain}) {
                     size="sm"
                     cursor="pointer"
                     name={!chat.isGroupChat
-                      ? getSenderFull(user, chat.users).name
+                      ? getSenderFull(user, chat.users)?.name
                       : chat.chatName}
                     src={!chat.isGroupChat
-                      ? getSenderFull(user, chat.users).pic
+                      ? getSenderFull(user, chat.users)?.pic
                       : chat.chatName}
                     border={selectedChat === chat ? "1px solid #38B2AC" : "2px solid #fff"}
                   />

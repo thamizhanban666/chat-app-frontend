@@ -37,7 +37,7 @@ const ProfileModal = ({ user, children }) => {
             color="#fff"
             borderRadius={"xl"}
           >
-            {user.name}
+            {user?.name}
           </ModalHeader>
           <ModalCloseButton color="#fff"/>
           <ModalBody
@@ -50,8 +50,8 @@ const ProfileModal = ({ user, children }) => {
             <Avatar
               borderRadius="full"
               boxSize="150px"
-              src={user.pic}
-              name={user.name}
+              src={user?.pic}
+              name={user?.name}
               border="2px solid #38B2AC"
               fontSize={"45px"}
             />
@@ -60,7 +60,7 @@ const ProfileModal = ({ user, children }) => {
               fontFamily="Work sans"
               textOverflow="wrap"
             >
-              <Text fontWeight="bold" fontSize="lg">Email:</Text> {user.email}
+              <Text fontWeight="bold" fontSize="lg">Email:</Text> {user?.email}
             </Text>
           </ModalBody>
           <ModalFooter bg="#efffff" borderRadius={"xl"}>

@@ -208,8 +208,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                       mr={2}
                       size="sm"
                       cursor="pointer"
-                      name={getSenderFull(user, selectedChat.users).name}
-                      src={getSenderFull(user, selectedChat.users).pic}
+                      name={getSenderFull(user, selectedChat.users)?.name}
+                      src={getSenderFull(user, selectedChat.users)?.pic}
                       border="2px solid #38B2AC"
                     />
                     <Text>{getSender(user, selectedChat.users)}</Text>
