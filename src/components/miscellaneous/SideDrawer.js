@@ -70,7 +70,7 @@ function SideDrawer() {
   };
 
   const accessChat = async (userId) => {
-    console.log(userId);
+    // console.log(userId);
 
     try {
       setLoadingChat(true);
@@ -108,7 +108,7 @@ function SideDrawer() {
         w="100%"
         p="4px 4px"
         borderBottomWidth="2px"
-        h={{ base: "9vh", md: "9vh", lg:"9vh",xl:"8vh" }}
+        h={{ base: "fit-content", md: "9vh", lg:"9vh",xl:"8vh" }}
         backgroundImage={purpleBg}
       >
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">

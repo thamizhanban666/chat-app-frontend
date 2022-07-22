@@ -13,7 +13,7 @@ function ChatPage() {
   return (
     <Box w="100%" h="100vh" backgroundImage={purpleBgLight}>
       {user && <SideDrawer />}
-      <Box display={"flex"} justifyContent={'space-between'} w={"100%"} h={{ base: selectedChat ? "100vh" : "91vh", md: "91vh",lg:"91vh",xl:"92vh" }} p={{base: '0px', md:'8px'}} >
+      <Box display={"flex"} justifyContent={'space-between'} w={"100%"} h={{ base: selectedChat ? "100vh" : "91vh", md: "91vh",lg:"91vh",xl:"92vh" }} p={{base: '2px', md:'8px'}} >
         {user && <MyChats fetchAgain={fetchAgain} /> }
         {user && <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />}
       </Box>

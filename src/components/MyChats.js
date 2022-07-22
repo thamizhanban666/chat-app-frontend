@@ -106,95 +106,107 @@ function MyChats({fetchAgain}) {
         className=''
       >
         {chats ? (
-          <Stack overflowY="scroll" pb={1}>
-            {chats.map((chat) => (
-              <Box
-                w="99.2%"
-                onClick={()=> handleSelect(chat)}
-                cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#fffffe" }
-                color={selectedChat === chat ?"white": "black"}
-                _hover={{boxShadow:"1px 1px 2px 0px green",border:"1px solid green",bg:"#fffffe",color:"#222"}}
-                px={2}
-                py={"2px"}
-                borderRadius="lg"
-                key={chat._id}
-                boxShadow={"1px 1px 2px 0px #222"}
-              >
-                <Box display="flex" alignItems="center">
-                  <Box position={"relative"}>
-                    <Avatar
-                      mr={2}
-                      size="sm"
-                      cursor="pointer"
-                      name={!chat.isGroupChat
-                        ? getSenderFull(user, chat.users)?.name
-                        : chat.chatName}
-                      src={!chat.isGroupChat
-                        ? getSenderFull(user, chat.users)?.pic
-                        : chat.chatName}
-                      border={selectedChat === chat ? "2px solid #fff" : "1px solid #38B2AC" }
-                    />
-                    {
-                      !chat.isGroupChat && onlineUsers.includes(getSenderFull(user, chat.users)?._id) ?
-                      <Box w={3.5} h={3.5} borderRadius="100%" border="2px solid #fffffe" bg="#03b5a0" position={"absolute"} top={0} right={1}  /> : <></>
-                    }
-                  </Box>
-                  <div>
-                    <Text fontWeight="medium">
-                      {!chat.isGroupChat
-                      ? getSender(user, chat.users)
-                      : chat.chatName}
-                    </Text>
-                      {chat.latestMessage ? (
-                        <Box display={"flex"}  >
-                          <Box display={chat.latestMessage.sender._id === user._id ? "block" : "none"} >
-                            {
-                            (chat.latestMessage.seen && !chat.isGroupChat) ?
-                              <Image
-                                boxSize='18px'
-                                objectFit='cover'
-                                src={doubleTick}
-                                alt='.'
-                                mx={1}
-                              />
-                                :
-                              <Image
-                                boxSize='17px'
-                                objectFit='cover'
-                                src={singleTick}
-                                alt='.'
-                                ms={1}
-                              /> 
-                            }
-                          </Box>
+          <Box>
+            <Stack overflowY="scroll" pb={1}>
+              {chats.map((chat) => (
+                <Box
+                  w="99.2%"
+                  onClick={()=> handleSelect(chat)}
+                  cursor="pointer"
+                  bg={selectedChat === chat ? "#38B2AC" : "#fffffe" }
+                  color={selectedChat === chat ?"white": "black"}
+                  _hover={{boxShadow:"1px 1px 2px 0px green",border:"1px solid green",bg:"#fffffe",color:"#222"}}
+                  px={2}
+                  py={"2px"}
+                  borderRadius="lg"
+                  key={chat._id}
+                  boxShadow={"1px 1px 2px 0px #222"}
+                >
+                  <Box display="flex" alignItems="center">
+                    <Box position={"relative"}>
+                      <Avatar
+                        mr={2}
+                        size="sm"
+                        cursor="pointer"
+                        name={!chat.isGroupChat
+                          ? getSenderFull(user, chat.users)?.name
+                          : chat.chatName}
+                        src={!chat.isGroupChat
+                          ? getSenderFull(user, chat.users)?.pic
+                          : chat.chatName}
+                        border={selectedChat === chat ? "2px solid #fff" : "1px solid #38B2AC" }
+                      />
+                      {
+                        !chat.isGroupChat && onlineUsers.includes(getSenderFull(user, chat.users)?._id) ?
+                        <Box w={3.5} h={3.5} borderRadius="100%" border="2px solid #fffffe" bg="#03b5a0" position={"absolute"} top={0} right={1}  /> : <></>
+                      }
+                    </Box>
+                    <div>
+                      <Box display={"flex"} alignItems={"center"}>
+                        <Text fontWeight="medium">
+                          {!chat.isGroupChat
+                          ? getSender(user, chat.users)
+                            : chat.chatName}
+                        </Text>
+                        {
+                          !chat.isGroupChat && onlineUsers.includes(getSenderFull(user, chat.users)?._id) ?
+                            <Text ms={3} fontSize={"xs"} color="green">online</Text>
+                            : <></>
+                        }
+                      </Box>
+                        {chat.latestMessage ? (
+                          <Box display={"flex"}  >
+                            <Box display={chat.latestMessage.sender._id === user._id ? "block" : "none"} >
+                              {
+                              (chat.latestMessage.seen && !chat.isGroupChat) ?
+                                <Image
+                                  boxSize='18px'
+                                  objectFit='cover'
+                                  src={doubleTick}
+                                  alt='.'
+                                  mx={1}
+                                />
+                                  :
+                                <Image
+                                  boxSize='17px'
+                                  objectFit='cover'
+                                  src={singleTick}
+                                  alt='.'
+                                  ms={1}
+                                /> 
+                              }
+                            </Box>
                             <Text fontSize="sm"  >
                               {chat.latestMessage.content.length > 19
                                 ? chat.latestMessage.content.substring(0, 20) + "..."
                                 : chat.latestMessage.content}
                             </Text>
-                        </Box>
-                      ) : (
-                        <Text fontSize="sm" color="lightGray" >
-                          No chat to display
-                        </Text>
-                      )}
-                  </div>
-                  <Box fontSize="12px" ms="auto" alignSelf={"end"}>
-                    {
-                      chat.notification?.filter((n) => n?.users?.includes(user._id)).length===0?"":
-                      <Box bg="green" color={"#fff"} display="flex" justifyContent={"center"} alignItems="center" w="fit-content" h="fit-content" minW={"18px"} borderRadius="2xl">
-                        <Text mx="0.5">
-                          {chat.notification?.filter((n) => n.users.includes(user._id)).length}
-                        </Text>
-                      </Box>
+                          </Box>
+                        ) : (
+                          <Text fontSize="sm" color="lightGray" >
+                            No chat to display
+                          </Text>
+                        )}
+                    </div>
+                    {chat.latestMessage ?
+                      <Box fontSize="12px" ms="auto" alignSelf={"end"}>
+                        {
+                          chat.notification?.filter((n) => n?.users?.includes(user._id)).length === 0 ? "" :
+                            <Box bg="green" color={"#fff"} display="flex" justifyContent={"center"} alignItems="center" w="fit-content" h="fit-content" minW={"18px"} borderRadius="2xl">
+                              <Text mx="0.5">
+                                {chat.notification?.filter((n) => n.users.includes(user._id)).length}
+                              </Text>
+                            </Box>
+                        }
+                        <Text color={"#222"}>{getMyTime(chat?.latestMessage?.createdAt)}</Text>
+                      </Box> : <></>
                     }
-                    <Text color={"#222"}>{getMyTime(chat?.latestMessage?.createdAt)}</Text>
                   </Box>
                 </Box>
-              </Box>
-            ))}
-          </Stack>
+              ))}
+            </Stack>
+            <Box h="100%" textAlign={"center"} display="flex" alignItems={"center"} justifyContent="center" color="#222" fontSize={"lg"}>Search for a person to chat</Box>
+          </Box>
         ) : (
           <ChatLoading />
         )}

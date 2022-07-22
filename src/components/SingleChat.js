@@ -28,7 +28,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { selectedChat, setSelectedChat, user, notification, setNotification, onlineUsers, setOnlineUsers } = useContext(ChatContext);
 
   const fetchMessages = async () => {
-    if (!selectedChat) return;
+    if (!selectedChat?.latestMessage) return;
 
     try {
       const config = {
@@ -48,6 +48,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       socket.emit("join chat",user._id, selectedChat);
       setFetchAgain(!fetchAgain);
     } catch (error) {
+      console.log(error);
       toast({
         title: "Error Occured!",
         description: "Failed to Load the Messages",
@@ -210,7 +211,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                       />
                       {
                         !selectedChat.isGroupChat && onlineUsers.includes(getSenderFull(user, selectedChat.users)?._id) ?
-                        <Box w={4} h={4} borderRadius="100%" border="2px solid #fffffe" bg="green" position={"absolute"} top={0} right={0.5}  /> : <></>
+                        <Box w={4} h={4} borderRadius="100%" border="2px solid #fffffe" bg="#03b5a0" position={"absolute"} top={0} right={0.5}  /> : <></>
                       }
                     </Box>
                     <Text color="#fff" ms={0.5}>{getSender(user, selectedChat.users)}</Text>
@@ -263,6 +264,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 h={20}
                 alignSelf="center"
                 margin="auto"
+                display={selectedChat.latestMessage? "block" : "none"}
               />
             ) : (
               <Box className="messages" px={2} pb={1}>
