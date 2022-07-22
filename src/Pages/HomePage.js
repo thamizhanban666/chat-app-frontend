@@ -24,7 +24,7 @@ function HomePage() {
 // }, [])
   
   return (
-    <Box w="lg" display={"flex"} flexDir={"column"} alignItems={"center"} mx="auto" >
+    <Box w="lg" display={"flex"} flexDir={"column"} alignItems={"center"} mx="auto"  >
       <Box
         fontSize="3xl"
         p={"1px 12px"}
@@ -39,7 +39,8 @@ function HomePage() {
       >
         Chatter
       </Box>
-      <Box bg="white" w="98%" p={4} mb={"25px"} borderRadius="lg" border="1px solid #150159">
+      <Box bg="white" w="98%" p={4} mb={"25px"} borderRadius="lg" boxShadow={"1px 1px 4px 1px #444"}
+      >
         <Tabs isFitted variant="soft-rounded">
           <TabList mb="1em">
             <Tab color={"#845EC2"} fontWeight={"bold"} >Login</Tab>

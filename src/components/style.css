@@ -3,5 +3,9 @@
   flex-direction: column;
   scrollbar-width: none;
   overflow-y: scroll;
+  
+}
+.bg-img{
   background-image: url("../assets/chat-background.svg") ;
+  box-shadow: 0px 2px 2px 0px #777 inset;
 }

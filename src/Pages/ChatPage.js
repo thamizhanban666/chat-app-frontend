@@ -4,19 +4,20 @@ import MyChats from '../components/MyChats'
 import ChatBox from '../components/ChatBox'
 import ChatContext from '../Context/ChatProvider';
 import {Box} from "@chakra-ui/react"
+import purpleBgLight from "../assets/purple-bg-light.svg"
 
 function ChatPage() {
   const { user, selectedChat } = useContext(ChatContext);
   const [fetchAgain, setFetchAgain] = useState(false);
 
   return (
-    <div style={{width:"100%"}}>
+    <Box w="100%" h="100vh" backgroundImage={purpleBgLight}>
       {user && <SideDrawer />}
-      <Box display={"flex"} justifyContent={'space-between'} w={"100%"} h={{ base: selectedChat ? "100vh" : "89.3vh", md: "89.3vh" }} p={{base: '4px', md:'8px'}} >
+      <Box display={"flex"} justifyContent={'space-between'} w={"100%"} h={{ base: selectedChat ? "100vh" : "91vh", md: "91vh",lg:"91vh",xl:"92vh" }} p={{base: '0px', md:'8px'}} >
         {user && <MyChats fetchAgain={fetchAgain} /> }
         {user && <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />}
       </Box>
-    </div>
+    </Box>
   )
 }
 

@@ -1,3 +1,14 @@
+export const getMyTime = (utc) => {
+  const date = new Date(utc);
+  const h = date.getHours().toString().length == "2" ? date.getHours() : ("0" + date.getHours());
+  const m = date.getMinutes().toString().length == "2" ? date.getMinutes() : ("0" + date.getMinutes());
+  return h + ":" + m
+}
+
+export const getMyDay = (utc) => {
+  return new Date(utc).toLocaleString().split(",")[0]
+}
+
 export const getSender = (loggedUser, users) => {
   return users[0]._id === loggedUser._id ? users[1]?.name : users[0]?.name;
 }

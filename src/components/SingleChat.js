@@ -10,12 +10,10 @@ import { getSender, getSenderFull } from "../config/chatLogic";
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import ScrollableChat from "./ScrollableChats";
-import Lottie from "react-lottie";
-import animationData from "../animations/typing.json";
 import Send from "../assets/send.png"
 import io from "socket.io-client";
 
-const ENDPOINT = "https://mern-chat-app-thamizhanban.herokuapp.com";
+const ENDPOINT = process.env.REACT_APP_SERVER;
 
 var socket, selectedChatCompare;
 
@@ -27,17 +25,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
   const toast = useToast();
-  const { selectedChat, setSelectedChat, user, notification, setNotification } = useContext(ChatContext);
-
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animationData,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
-
+  const { selectedChat, setSelectedChat, user, notification, setNotification, onlineUsers, setOnlineUsers } = useContext(ChatContext);
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -52,13 +40,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       setLoading(true);
 
       const { data } = await axios.get(
-        `https://mern-chat-app-thamizhanban.herokuapp.com/api/message/${selectedChat._id}`,
+        `${process.env.REACT_APP_SERVER}/api/message/${selectedChat._id}`,
         config
       );
       setMessages(data);
       setLoading(false);
-
-      socket.emit("join chat", selectedChat._id);
+      socket.emit("join chat",user._id, selectedChat);
+      setFetchAgain(!fetchAgain);
     } catch (error) {
       toast({
         title: "Error Occured!",
@@ -84,15 +72,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         };
         setNewMessage("");
         const { data } = await axios.post(
-          "https://mern-chat-app-thamizhanban.herokuapp.com/api/message",
+          `${process.env.REACT_APP_SERVER}/api/message`,
           {
             content: newMessage,
             chatId: selectedChat._id,
+            users: selectedChat.users.map((u)=> u._id).filter((u)=> u !== user._id)
           },
           config
           );
           setMessages([...messages, data]);
-          socket.emit("new message", data);
+          socket.emit("new message", data);  
           setFetchAgain(!fetchAgain);
         } catch (error) {
           toast({
@@ -122,33 +111,20 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       socket.emit("stop typing", selectedChat._id);
     }
 
-    // let lastTypingTime = new Date().getTime();
-    // var timerLength = 3000;
-    // // console.log(lastTypingTime);
-    // setTimeout(() => {
-    //   var timeNow = new Date().getTime();
-    //   var timeDiff = timeNow - lastTypingTime;
-    //   // console.log(timeDiff);
-    //   if (timeDiff >= timerLength && typing) {
-    //     socket.emit("stop typing", selectedChat._id);
-    //     setTyping(false);
-    //     // console.log("typing stopped");
-    //   }
-    // }, timerLength);
   };
 
-  const isNotified = (notifications, newElement) => {
-    const isFound = notifications.some((e) => {
-      if (e.chat._id == newElement.chat._id) { return true; }
-      return false;
-    })
-    return isFound;
-  }
+  // const isNotified = (notifications, newElement) => {
+  //   const isFound = notifications.some((e) => {
+  //     if (e.chat._id == newElement.chat._id) { return true; }
+  //     return false;
+  //   })
+  //   return isFound;
+  // }
 
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
-    socket.on("connected", () => setSocketConnected(true));
+    socket.once("connected", () =>  setSocketConnected(true));
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
   }, []);
@@ -160,33 +136,50 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   }, [selectedChat]);
   
   useEffect(() => {
-    socket.on("message recieved", (newMessageRecieved) => {
+    socket.once("message recieved", (newMessageRecieved) => {
       if (
         !selectedChatCompare || 
         selectedChatCompare._id !== newMessageRecieved.chat._id
-        ) {
-        if (!notification.includes(newMessageRecieved)) {
-          if (!isNotified(notification, newMessageRecieved)) {
-            setNotification([newMessageRecieved, ...notification]);
-            setFetchAgain(!fetchAgain);
-          }
-        }
+      ) {
+        // if (!notification.includes(newMessageRecieved)) {
+          // if (!isNotified(notification, newMessageRecieved)) {
+          //   setNotification([newMessageRecieved, ...notification]);
+          // }
+        setFetchAgain(!fetchAgain);
+        // }
       } else {
         setMessages([...messages, newMessageRecieved]);
         setFetchAgain(!fetchAgain);
+        socket.emit("seen",user._id,selectedChatCompare)
       }
     });
+
+    socket.once("other seen", (chatId) => {
+      setFetchAgain(!fetchAgain);
+      if (selectedChatCompare?._id === chatId) {
+        if (selectedChatCompare.isGroupChat) return;
+        setMessages(messages.map((m) => {
+          if (m.seen) return m;
+          m.seen = true;
+          return m;
+        }))
+      }
+    })
+
+    socket.once("online users", (updatedOnlineUsers) => {
+      setOnlineUsers(updatedOnlineUsers)
+    })
+    
   });
-
-
+  
   return (
     <>
       {selectedChat ? (
         <>
-          <Text
-            fontSize={{ base: "20px", md: "22px" }}
+          <Box
+            fontSize={{ base: "18px", sm: "22px" }}
             fontWeight="bold"
-            pb={1}
+            pb={"0px"}
             px={2}
             w="100%"
             fontFamily="Work sans"
@@ -199,20 +192,28 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               display={{ base: "flex", md: "none" }}
               icon={<ArrowBackIcon />}
               onClick={() => setSelectedChat("")}
+              boxShadow={"1px 1px 3px 1px #666"}
+              borderRadius="100%"
             />
             {messages &&
               (!selectedChat.isGroupChat ? (
                 <>
                   <Box display="flex" alignItems="center">
-                    <Avatar
-                      mr={2}
-                      size="sm"
-                      cursor="pointer"
-                      name={getSenderFull(user, selectedChat.users)?.name}
-                      src={getSenderFull(user, selectedChat.users)?.pic}
-                      border="2px solid #38B2AC"
-                    />
-                    <Text>{getSender(user, selectedChat.users)}</Text>
+                    <Box position={"relative"}>
+                      <Avatar
+                        mr={2}
+                        size="sm"
+                        cursor="pointer"
+                        name={getSenderFull(user, selectedChat.users)?.name}
+                        src={getSenderFull(user, selectedChat.users)?.pic}
+                        border="2px solid #fff"
+                      />
+                      {
+                        !selectedChat.isGroupChat && onlineUsers.includes(getSenderFull(user, selectedChat.users)?._id) ?
+                        <Box w={4} h={4} borderRadius="100%" border="2px solid #fffffe" bg="green" position={"absolute"} top={0} right={0.5}  /> : <></>
+                      }
+                    </Box>
+                    <Text color="#fff" ms={0.5}>{getSender(user, selectedChat.users)}</Text>
                   </Box>
                   <ProfileModal
                     user={getSenderFull(user, selectedChat.users)}
@@ -225,11 +226,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                       mr={2}
                       size="sm"
                       cursor="pointer"
-                      name={getSenderFull(user, selectedChat.users).name}
-                      src={getSenderFull(user, selectedChat.users).pic}
-                      border="2px solid #38B2AC"
+                      name={selectedChat.chatName}
+                      border="2px solid #fff"
                     />
-                    <Text>
+                    <Text color="#fff">
                       {selectedChat.chatName}
                     </Text>
                   </Box>
@@ -240,14 +240,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   />
                 </>
               ))}
-          </Text>
+          </Box>
           <Box
             display="flex"
             flexDir="column"
             justifyContent="flex-end"
-            // p={2}
+            pt={0.5}
             mt="6px"
-            bg="#fff"
+            // bg="#fff"
+            className='bg-img'
             w="100%"
             h="100%"
             overflowY="hidden"
@@ -265,7 +266,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               />
             ) : (
               <Box className="messages" px={2} pb={1}>
-                <ScrollableChat messages={messages} istyping={istyping} defaultOptions={defaultOptions} />
+                <ScrollableChat messages={messages} istyping={istyping} />
               </Box>
             )}
 
@@ -275,13 +276,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 isRequired
                 // mt={1}
               >
-              <Box display="flex" p={1}>
+              <Box display="flex" p={1} bg="#eeefff">
                 <Input
                   variant="filled"
-                  bg="#E0E0E0"
+                  bg="#fff"
                   placeholder="Enter a message.."
                   onChange={typingHandler}
                   value={newMessage}
+                  autoComplete="off"
+                  boxShadow="1px 1px 4px 0px #888"
                 />
                 <Button
                   // mt={1}

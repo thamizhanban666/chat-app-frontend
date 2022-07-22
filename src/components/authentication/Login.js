@@ -43,7 +43,7 @@ function Login() {
       };
 
       const { data } = await axios.post(
-        "https://mern-chat-app-thamizhanban.herokuapp.com/api/user/login",
+        `${process.env.REACT_APP_SERVER}/api/user/login`,
         { email, password },
         config
       );

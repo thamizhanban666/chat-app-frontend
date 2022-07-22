@@ -20,6 +20,7 @@ const UserListItem = ({ user, handleFunction }) => {
       py={2}
       mb={2}
       borderRadius="lg"
+      boxShadow={"1px 1px 1px 1px #999"}
     >
       <Avatar
         mr={2}

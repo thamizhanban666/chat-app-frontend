@@ -3,7 +3,8 @@
 .App {
   min-height: 100vh;
   display: flex;
-  background-image: url("./assets/background.png");
+  background-image: url("./assets/purple-bg.svg");
+  background-color: rgb(244, 247, 250);
   background-position: center;
   background-size: cover;
   color:#222

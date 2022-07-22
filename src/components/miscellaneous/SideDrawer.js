@@ -5,12 +5,12 @@ import { Avatar, Box, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerConte
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import NotificationBadge from "react-notification-badge";
-import { Effect } from "react-notification-badge";
+// import NotificationBadge from "react-notification-badge";
+// import { Effect } from "react-notification-badge";
 import ProfileModal from "./ProfileModal";
 import ChatLoading from "../ChatLoading";
 import UserListItem from "../UserAvatar/UserListItem";
-import { getSender } from "../../config/chatLogic";
+import purpleBg from "../../assets/purple-bg.svg"
 
 function SideDrawer() {
   const [search, setSearch] = useState("");
@@ -37,15 +37,10 @@ function SideDrawer() {
     navigate("/");
   };
 
-  const handleSearch = async () => {
-    if (!search) {
-      toast({
-        title: "Enter something...",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-        position: "top-left",
-      });
+  const handleSearch = async (query) => {
+    setSearch(query)
+    if (!query) {
+      setSearchResult([])
       return;
     }
 
@@ -58,7 +53,7 @@ function SideDrawer() {
         },
       };
 
-      const { data } = await axios.get(`https://mern-chat-app-thamizhanban.herokuapp.com/api/user?search=${search}`, config);
+      const { data } = await axios.get(`${process.env.REACT_APP_SERVER}/api/user?search=${search}`, config);
 
       setLoading(false);
       setSearchResult(data);
@@ -85,7 +80,7 @@ function SideDrawer() {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.post(`https://mern-chat-app-thamizhanban.herokuapp.com/api/chat`, { userId }, config);
+      const { data } = await axios.post(`${process.env.REACT_APP_SERVER}/api/chat`, { userId }, config);
 
       if (!chats.find((c) => c._id === data._id)) {
         setChats([...chats,data]);
@@ -110,10 +105,11 @@ function SideDrawer() {
         display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
         justifyContent="space-between"
         alignItems="center"
-        // bg="#b13abe"
         w="100%"
         p="4px 4px"
         borderBottomWidth="2px"
+        h={{ base: "9vh", md: "9vh", lg:"9vh",xl:"8vh" }}
+        backgroundImage={purpleBg}
       >
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
           <Button variant="ghost"
@@ -137,8 +133,8 @@ function SideDrawer() {
         >
           Chatter
         </Box>
-        <div>
-          <Menu>
+        <Box>
+          {/* <Menu>
             <MenuButton p={1}>
               <NotificationBadge
                 count={notification.length}
@@ -167,7 +163,7 @@ function SideDrawer() {
                 })
                 }
             </MenuList>
-          </Menu>
+          </Menu> */}
           <Menu>
             <MenuButton as={Button} bg="#eeefff" p="1" rightIcon={<ChevronDownIcon />}>
               <Avatar
@@ -178,7 +174,7 @@ function SideDrawer() {
                 border="2px solid #38B2AC"
               />
             </MenuButton>
-            <MenuList>
+            <MenuList boxShadow={"1px 1px 3px 0px #666"}>
               <ProfileModal user={user}>
                 <MenuItem>My Profile</MenuItem>{" "}
               </ProfileModal>
@@ -186,23 +182,25 @@ function SideDrawer() {
               <MenuItem onClick={logoutHandler}>Logout</MenuItem>
             </MenuList>
           </Menu>
-        </div>
+        </Box>
       </Box>
 
       <Drawer placement="left" onClose={onClose} isOpen={isOpen} >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader borderBottomWidth="1px">Search User</DrawerHeader>
-          <DrawerBody p="16px 7px">
+          <DrawerCloseButton color="#fff" borderWidth={3} borderRadius="100%" />
+          <DrawerHeader backgroundImage={purpleBg} color="#fff" >Search User</DrawerHeader>
+          <DrawerBody p="16px 7px" className="bg-img">
             <Box display="flex" pb={2}>
               <Input
                 placeholder="Search by name or email"
                 mr={2}
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
+                bg="#fff"
+                boxShadow={"1px 1px 2px 1px #888"}
               />
-              <Button onClick={handleSearch} bg="#008C81" color="#fff" _hover={{bg:"#eee",color:"#008C81"}}>Go</Button>
+              {/* <Button onClick={handleSearch} bg="#008C81" color="#fff" _hover={{bg:"#eee",color:"#008C81"}}>Go</Button> */}
             </Box>
             {loading ? (
               <ChatLoading />

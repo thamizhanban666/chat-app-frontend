@@ -10,6 +10,8 @@ const [user, setUser] = useState();
 const [selectedChat, setSelectedChat] = useState();
 const [notification, setNotification] = useState([]);
 const [chats, setChats] = useState();
+const [onlineUsers, setOnlineUsers] = useState([]);
+
 const navigate = useNavigate()
   
 useEffect(() => {
@@ -22,7 +24,7 @@ useEffect(() => {
 
   return (
     <div className='App'>
-      <ChatProvider value={{ user, setUser, selectedChat, setSelectedChat, notification, setNotification, chats, setChats }}>
+      <ChatProvider value={{ user, setUser, selectedChat, setSelectedChat, notification, setNotification, chats, setChats,onlineUsers, setOnlineUsers }}>
 
         <Routes>
           <Route path='/' element={<HomePage/>} />

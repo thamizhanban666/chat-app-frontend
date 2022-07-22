@@ -48,7 +48,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.get(`https://mern-chat-app-thamizhanban.herokuapp.com/api/user?search=${search}`, config);
+      const { data } = await axios.get(`${process.env.REACT_APP_SERVER}/api/user?search=${search}`, config);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
@@ -75,7 +75,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
         },
       };
       const { data } = await axios.put(
-        `https://mern-chat-app-thamizhanban.herokuapp.com/api/chat/renamegroup`,
+        `${process.env.REACT_APP_SERVER}/api/chat/renamegroup`,
         {
           chatId: selectedChat._id,
           chatName: groupChatName,
@@ -130,7 +130,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
         },
       };
       const { data } = await axios.put(
-        `https://mern-chat-app-thamizhanban.herokuapp.com/api/chat/addtogroup`,
+        `${process.env.REACT_APP_SERVER}/api/chat/addtogroup`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
@@ -174,7 +174,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
         },
       };
       const { data } = await axios.put(
-        `https://mern-chat-app-thamizhanban.herokuapp.com/api/chat/removefromgroup`,
+        `${process.env.REACT_APP_SERVER}/api/chat/removefromgroup`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
@@ -201,7 +201,7 @@ const UpdateGroupChatModal = ({fetchAgain, setFetchAgain, fetchMessages }) => {
 
   return (
     <>
-      <IconButton display={{ base: "flex" }} icon={<EditIcon color="#000" />} onClick={onOpen} bg="#fff" />
+      <IconButton display={{ base: "flex" }} borderRadius="100%" boxShadow="1px 1px 2px" icon={<EditIcon color="#000" />} onClick={onOpen} bg="#fff" />
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />

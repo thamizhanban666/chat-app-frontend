@@ -99,7 +99,7 @@ function Signup() {
         },
       };
       const { data } = await axios.post(
-        "https://mern-chat-app-thamizhanban.herokuapp.com/api/user/signup",
+        `${process.env.REACT_APP_SERVER}/api/user/signup`,
         {
           name,
           email,
